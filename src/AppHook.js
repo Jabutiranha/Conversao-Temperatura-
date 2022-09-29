@@ -1,49 +1,79 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 const AppHook = () => {
-    const [temperature, setTemperature] = useState('')
-    const [scale, setScale] = useState('F°')
-    const [temperatureResult, setTemperatureResult] = useState('')
-    const [scaleResult, setScaleResult] = useState('')
+    const [nome, setNome] = useState('')
+    const [email, setEmail] = useState('')
+    const [telefone, setTelefone] = useState('')
+    const [cargo, setCargo] = useState('')
+    const [historico, setHistorico] = useState('')
+    const [curriculum, setCurriculum] = useState([])
 
-    const convert = () => {
-        if (scale === 'F°') {
-            setTemperatureResult (((temperature - 32) * 5) / 9)
-            setScaleResult ('C°')
-        } else {
-            setTemperatureResult (((temperature * 9) / 5) + 32)
-            setScaleResult ('F°')
+    useEffect(() => {
+        const tempList = localStorage.getItem('curriculum')
+        if (tempList != null) {
+            setCurriculum(JSON.parse(tempList))
         }
+    }, [])
+
+    const save = () => {
+        const item = {
+            nome, email, telefone, cargo, historico
+        }
+
+        const newCurriculum = [...curriculum, item]
+
+        setNome('')
+        setEmail('')
+        setTelefone('')
+        setCargo('')
+        setHistorico('')
+        setCurriculum(newCurriculum)
+
+        localStorage.setItem('curriculum', JSON.stringify(newCurriculum))
+
     }
 
 
 
     return (
         <div>
-            <h1>Conversor de Temperatura</h1>
 
-            Temperatura: <br />
-            <input type="number" onChange={(event) => setTemperature(event.target.value)} />
+            Nome: <br />
+            <input type="text" value={nome} onChange={(event) => setNome(event.target.value)} />
+            <br /><br />
 
-            <label>
-                <input type="radio" value="F°" 
-                    checked={scale === 'F°'}
-                    onChange={(event) => setScale(event.target.value)} /> Fahrenheit
-            </label>
-            <label>
-                <input type="radio" value="C°" 
-                    checked={scale === 'C°'}
-                    onChange={(event) => setScale(event.target.value)} /> Celsius
-            </label>
+            E-mail: <br />
+            <input type="text" value={email} onChange={(event) => setEmail(event.target.value)} />
+            <br /><br />
+
+            Telefone: <br />
+            <input type="text" value={telefone} onChange={(event) => setTelefone(event.target.value)} />
+            <br /><br />
+
+            cargo: <br />
+            <input type="text" value={cargo} onChange={(event) => setCargo(event.target.value)} />
+            <br /><br />
+
+            Histórico: <br />
+            <input type="text" value={historico} onChange={(event) => setHistorico(event.target.value)} />
+            <br /> <br />
+
+            <input type="button" value="Salvar" onClick={save} />
 
             <br />
-            <input type="button" value="Converter" onClick={convert} />
 
-            <br />
-            <p>A temperatura é: {temperatureResult} {scaleResult}</p>
+            <ul>
+                {
+                    curriculum.map((item, index) => (
+                        <li key={index}>{item.nome} - {item.email} - {item.telefone} - {item.cargo} - {item.historico}</li>
+                    ))
+                }
+
+            </ul>
+
         </div>
     )
-    
+
 
 }
 
